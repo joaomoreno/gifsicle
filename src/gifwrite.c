@@ -49,42 +49,6 @@ extern "C" {
 #define TABLE_TYPE              0
 #define LINKS_TYPE              1
 #define MAX_LINKS_TYPE          5
-typedef struct Gif_Node {
-  Gif_Code code;
-  uint8_t type;
-  uint8_t suffix;
-  struct Gif_Node *sibling;
-  union {
-    struct Gif_Node *s;
-    struct Gif_Node **m;
-  } child;
-} Gif_Node;
-
-
-typedef struct Gif_CodeTable {
-  Gif_Node *nodes;
-  int nodes_pos;
-  Gif_Node **links;
-  int links_pos;
-  int clear_code;
-} Gif_CodeTable;
-
-
-struct Gif_Writer {
-  FILE *f;
-  uint8_t *v;
-  uint32_t pos;
-  uint32_t cap;
-  Gif_CompressInfo gcinfo;
-  int global_size;
-  int local_size;
-  int errors;
-  int cleared;
-  Gif_CodeTable code_table;
-  void (*byte_putter)(uint8_t, struct Gif_Writer *);
-  void (*block_putter)(const uint8_t *, size_t, struct Gif_Writer *);
-};
-
 
 #define gifputbyte(b, grr)      ((*grr->byte_putter)(b, grr))
 #define gifputblock(b, l, grr)  ((*grr->block_putter)(b, l, grr))
@@ -1124,6 +1088,23 @@ Gif_IncrementalWriteComplete(Gif_Writer* grr, Gif_Stream* gfs)
     return 1;
 }
 
+Gif_Writer*
+Gif_NewMemoryWriter(const Gif_CompressInfo* gcinfo)
+{
+    Gif_Writer* grr = Gif_New(Gif_Writer);
+    if (!grr || !gif_writer_init(grr, 0, gcinfo)) {
+        Gif_Delete(grr);
+        return NULL;
+    }
+    return grr;
+}
+
+void
+Gif_DeleteMemoryWriter(Gif_Writer* grr)
+{
+    gif_writer_cleanup(grr);
+    Gif_Delete(grr);
+}
 
 #undef Gif_CompressImage
 #undef Gif_WriteFile

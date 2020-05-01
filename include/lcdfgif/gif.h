@@ -248,6 +248,42 @@ struct Gif_Record {
     uint32_t length;
 };
 
+typedef struct Gif_Node {
+  Gif_Code code;
+  uint8_t type;
+  uint8_t suffix;
+  struct Gif_Node *sibling;
+  union {
+    struct Gif_Node *s;
+    struct Gif_Node **m;
+  } child;
+} Gif_Node;
+
+
+typedef struct Gif_CodeTable {
+  Gif_Node *nodes;
+  int nodes_pos;
+  Gif_Node **links;
+  int links_pos;
+  int clear_code;
+} Gif_CodeTable;
+
+
+struct Gif_Writer {
+  FILE *f;
+  uint8_t *v;
+  uint32_t pos;
+  uint32_t cap;
+  Gif_CompressInfo gcinfo;
+  int global_size;
+  int local_size;
+  int errors;
+  int cleared;
+  Gif_CodeTable code_table;
+  void (*byte_putter)(uint8_t, struct Gif_Writer *);
+  void (*block_putter)(const uint8_t *, size_t, struct Gif_Writer *);
+};
+
 #define GIF_READ_COMPRESSED             1
 #define GIF_READ_UNCOMPRESSED           2
 #define GIF_READ_CONST_RECORD           4
@@ -278,6 +314,9 @@ typedef struct Gif_Writer Gif_Writer;
 Gif_Writer*     Gif_IncrementalWriteFileInit(Gif_Stream* gfs, const Gif_CompressInfo* gcinfo, FILE *f);
 int             Gif_IncrementalWriteImage(Gif_Writer* grr, Gif_Stream* gfs, Gif_Image* gfi);
 int             Gif_IncrementalWriteComplete(Gif_Writer* grr, Gif_Stream* gfs);
+
+Gif_Writer*     Gif_NewMemoryWriter(const Gif_CompressInfo* gcinfo);
+void            Gif_DeleteMemoryWriter(Gif_Writer* grr);
 
 
 /** HOOKS AND MISCELLANEOUS **/
