@@ -310,6 +310,68 @@ void            input_done(void);
 void            output_frames(void);
 
 /*****
+ * scale
+ **/
+
+#include "kcolor.h"
+
+/* kcscreen: A frame buffer containing `kacolor`s (one per pixel).
+   Kcolors with components < 0 represent transparency. */
+typedef struct {
+    kacolor* data;      /* data buffer: (x,y) in data[y*width + x] */
+    kacolor* scratch;   /* scratch buffer, used for previous disposal */
+    unsigned width;     /* screen width */
+    unsigned height;    /* screen height */
+    kacolor bg;         /* background color */
+} kcscreen;
+
+/* ksscreen: A frame buffer containing `scale_color`s (one per pixel).
+   Kcolors with components < 0 represent transparency. */
+typedef struct {
+    scale_color* data;      /* data buffer: (x,y) in data[y*width + x] */
+    scale_color* scratch;   /* scratch buffer, used for previous disposal */
+    unsigned width;         /* screen width */
+    unsigned height;        /* screen height */
+    scale_color bg;         /* background color */
+} ksscreen;
+
+typedef struct {
+    float w;
+    int ipos;
+    int opos;
+} scale_weight;
+
+typedef struct {
+    scale_weight* ws;
+    int n;
+} scale_weightset;
+
+typedef struct {
+    Gif_Stream* gfs;
+    Gif_Image* gfi;
+    int imageno;
+    kd3_tree* kd3;
+    ksscreen iscr;
+    kcscreen oscr;
+    kcscreen xscr;
+    double oxf;                 /* (input width) / (output width) */
+    double oyf;                 /* (input height) / (output height) */
+    double ixf;                 /* (output width) / (input width) */
+    double iyf;                 /* (output height) / (input height) */
+    scale_weightset xweights;
+    scale_weightset yweights;
+    kd3_tree global_kd3;
+    kd3_tree local_kd3;
+    unsigned max_desired_dist;
+    int scale_colors;
+} scale_context;
+
+void
+resize_stream(Gif_Stream* gfs,
+              double new_width, double new_height,
+              int flags, int method, int scale_colors);
+
+/*****
  * stuff with frames
  **/
 extern Gt_Frame def_frame;

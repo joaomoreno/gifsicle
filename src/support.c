@@ -34,11 +34,11 @@ verror(const char* landmark, int need_file,
     if (!fmt || !*fmt)
         return;
 
-    if (!landmark && need_file && active_output_data.active_output_name
-        && mode != BLANK_MODE && mode != MERGING && nested_mode != MERGING)
-        landmark = active_output_data.active_output_name;
-    else if (!landmark)
-        landmark = "";
+    // if (!landmark && need_file && active_output_data.active_output_name
+    //     && mode != BLANK_MODE && mode != MERGING && nested_mode != MERGING)
+    //     landmark = active_output_data.active_output_name;
+    // else if (!landmark)
+    landmark = "";
 
     if (seriousness > 2)
         xfmt = "%s:%s%s fatal error: ";
@@ -49,7 +49,7 @@ verror(const char* landmark, int need_file,
     snprintf(pbuf, sizeof(pbuf), xfmt, program_name, landmark, *landmark ? ":" : "");
     p = strlen(pbuf);
 
-    Clp_vsnprintf(clp, buf, sizeof(buf), fmt, val);
+    // Clp_vsnprintf(clp, buf, sizeof(buf), fmt, val);
     n = strlen(buf);
     if ((size_t) n + 1 < sizeof(buf) && (n == 0 || buf[n - 1] != '\n')) {
         buf[n++] = '\n';
@@ -1644,7 +1644,7 @@ merge_frame_interval(Gt_Frameset *fset, int f1, int f2,
     /* compress immediately if possible to save on memory */
     if (desti->img) {
       if (compress_immediately > 0) {
-        Gif_FullCompressImage(dest, desti, &gif_write_info);
+        Gif_FullCompressImage(dest, desti, 0);
         Gif_ReleaseUncompressedImage(desti);
       } else if (desti->compressed)
         Gif_ReleaseCompressedImage(desti);

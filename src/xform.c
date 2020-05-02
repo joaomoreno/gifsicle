@@ -368,16 +368,6 @@ rotate_image(Gif_Image* gfi, Gt_Frame* fr, int rotation)
  * scale
  **/
 
-/* kcscreen: A frame buffer containing `kacolor`s (one per pixel).
-   Kcolors with components < 0 represent transparency. */
-typedef struct {
-    kacolor* data;      /* data buffer: (x,y) in data[y*width + x] */
-    kacolor* scratch;   /* scratch buffer, used for previous disposal */
-    unsigned width;     /* screen width */
-    unsigned height;    /* screen height */
-    kacolor bg;         /* background color */
-} kcscreen;
-
 /* initialize `kcs` to an empty state */
 static void kcscreen_clear(kcscreen* kcs) {
     kcs->data = kcs->scratch = NULL;
@@ -454,16 +444,6 @@ static void kcscreen_dispose(kcscreen* kcs, const Gif_Image* gfi) {
 }
 
 
-/* ksscreen: A frame buffer containing `scale_color`s (one per pixel).
-   Kcolors with components < 0 represent transparency. */
-typedef struct {
-    scale_color* data;      /* data buffer: (x,y) in data[y*width + x] */
-    scale_color* scratch;   /* scratch buffer, used for previous disposal */
-    unsigned width;         /* screen width */
-    unsigned height;        /* screen height */
-    scale_color bg;         /* background color */
-} ksscreen;
-
 /* initialize `kss` to an empty state */
 static void ksscreen_clear(ksscreen* kss) {
     kss->data = kss->scratch = NULL;
@@ -537,37 +517,6 @@ static void ksscreen_dispose(ksscreen* kss, const Gif_Image* gfi) {
     }
 }
 
-
-typedef struct {
-    float w;
-    int ipos;
-    int opos;
-} scale_weight;
-
-typedef struct {
-    scale_weight* ws;
-    int n;
-} scale_weightset;
-
-typedef struct {
-    Gif_Stream* gfs;
-    Gif_Image* gfi;
-    int imageno;
-    kd3_tree* kd3;
-    ksscreen iscr;
-    kcscreen oscr;
-    kcscreen xscr;
-    double oxf;                 /* (input width) / (output width) */
-    double oyf;                 /* (input height) / (output height) */
-    double ixf;                 /* (output width) / (input width) */
-    double iyf;                 /* (output height) / (input height) */
-    scale_weightset xweights;
-    scale_weightset yweights;
-    kd3_tree global_kd3;
-    kd3_tree local_kd3;
-    unsigned max_desired_dist;
-    int scale_colors;
-} scale_context;
 
 #if ENABLE_THREADS
 static pthread_mutex_t global_colormap_lock = PTHREAD_MUTEX_INITIALIZER;
@@ -1205,10 +1154,10 @@ static void scale_image(scale_context* sctx, int method) {
     Gif_ReleaseUncompressedImage(gfi);
     Gif_ReleaseCompressedImage(gfi);
     *gfi = gfo;
-    if (was_compressed) {
-        Gif_FullCompressImage(sctx->gfs, gfi, &gif_write_info);
-        Gif_ReleaseUncompressedImage(gfi);
-    }
+    // if (was_compressed) {
+    //     Gif_FullCompressImage(sctx->gfs, gfi, &gif_write_info);
+    //     Gif_ReleaseUncompressedImage(gfi);
+    // }
 }
 
 

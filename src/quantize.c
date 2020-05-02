@@ -1641,7 +1641,7 @@ colormap_stream(Gif_Stream* gfs, Gif_Colormap* new_cm, Gt_OutputData* od)
 
     /* 1.92: recompress *after* deleting the local colormap */
     if (gfcm && only_compressed) {
-        Gif_FullCompressImage(gfs, gfi, &gif_write_info);
+        Gif_FullCompressImage(gfs, gfi, 0);
         Gif_ReleaseUncompressedImage(gfi);
     }
   }
@@ -1719,7 +1719,7 @@ colormap_stream(Gif_Stream* gfs, Gif_Colormap* new_cm, Gt_OutputData* od)
         gfi->transparent = map[gfi->transparent];
 
       if (only_compressed) {
-        Gif_FullCompressImage(gfs, gfi, &gif_write_info);
+        Gif_FullCompressImage(gfs, gfi, 0);
         Gif_ReleaseUncompressedImage(gfi);
       }
     }
