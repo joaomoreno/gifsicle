@@ -316,6 +316,7 @@ int             Gif_IncrementalWriteImage(Gif_Writer* grr, Gif_Stream* gfs, Gif_
 int             Gif_IncrementalWriteComplete(Gif_Writer* grr, Gif_Stream* gfs);
 
 Gif_Writer*     Gif_NewMemoryWriter(const Gif_CompressInfo* gcinfo);
+int             Gif_WriteGif(Gif_Writer* grr, Gif_Stream *gfs);
 void            Gif_DeleteMemoryWriter(Gif_Writer* grr);
 
 
