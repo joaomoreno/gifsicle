@@ -1102,24 +1102,13 @@ Gif_NewMemoryWriter(const Gif_CompressInfo* gcinfo)
 int
 Gif_WriteGif(Gif_Writer* grr, Gif_Stream *gfs)
 {
-    int ok = write_gif(gfs, grr);
-
-    if (ok) {
-        Gif_Extension* gfex;
-        for (gfex = gfs->end_extension_list; gfex; gfex = gfex->next)
-            write_generic_extension(gfex, grr);
-        if (gfs->end_comment)
-            write_comment_extensions(gfs->end_comment, grr);
-        gifputbyte(';', grr);
-        gif_writer_cleanup(grr);
-    }
-
-    return ok;
+    return write_gif(gfs, grr);
 }
 
 void
 Gif_DeleteMemoryWriter(Gif_Writer* grr)
 {
+    gif_writer_cleanup(grr);
     Gif_Delete(grr);
 }
 
