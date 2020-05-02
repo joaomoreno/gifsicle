@@ -34,10 +34,10 @@ verror(const char* landmark, int need_file,
     if (!fmt || !*fmt)
         return;
 
-    if (!landmark && need_file && active_output_data.active_output_name
+    /* if (!landmark && need_file && active_output_data.active_output_name
         && mode != BLANK_MODE && mode != MERGING && nested_mode != MERGING)
         landmark = active_output_data.active_output_name;
-    else if (!landmark)
+    else */ if (!landmark)
         landmark = "";
 
     if (seriousness > 2)
@@ -49,7 +49,7 @@ verror(const char* landmark, int need_file,
     snprintf(pbuf, sizeof(pbuf), xfmt, program_name, landmark, *landmark ? ":" : "");
     p = strlen(pbuf);
 
-    Clp_vsnprintf(clp, buf, sizeof(buf), fmt, val);
+    // Clp_vsnprintf(clp, buf, sizeof(buf), fmt, val);
     n = strlen(buf);
     if ((size_t) n + 1 < sizeof(buf) && (n == 0 || buf[n - 1] != '\n')) {
         buf[n++] = '\n';
